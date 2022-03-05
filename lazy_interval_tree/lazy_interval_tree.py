@@ -97,3 +97,12 @@ class LazyIntervalTree:
         Split overlapping intervals and then merge newly created sub-intervals.
         """
         pass
+
+    def __truediv__(self, rhs: "LazyIntervalTree") -> "LazyIntervalTree":
+        """
+        Overlay on another LazyIntervalTree.
+        """
+        return self.overlay_on_another_tree(rhs)
+
+    def overlay_on_another_tree(self, tree: "LazyIntervalTree") -> "LazyIntervalTree":
+        pass
