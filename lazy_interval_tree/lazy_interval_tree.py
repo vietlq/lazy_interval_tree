@@ -15,6 +15,7 @@ class Interval(_Interval):
     def __init__(self, begin, end, data):
         if begin >= end:
             raise ValueError(f"The `begin` must always be less than `end`! Actual begin={begin} end={end}")
+        super().__init__()
 
     def __lt__(self, interval: "Interval") -> bool:
         return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)

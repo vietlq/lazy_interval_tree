@@ -46,12 +46,12 @@ def run_bench():
 
     slice_instructions = [
         (intervals, 10),
-        # (intervals, 100),
-        # (intervals, 1_000),
-        # (intervals, 10_000),
-        # (intervals, 20_000),
-        # (intervals, 100_000),
-        # (intervals, None),
+        (intervals, 100),
+        (intervals, 1_000),
+        (intervals, 10_000),
+        (intervals, 20_000),
+        (intervals, 100_000),
+        (intervals, None),
     ]
 
     def _run_bench(tree):
