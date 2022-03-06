@@ -12,6 +12,10 @@ def set_union(a: Set, b: Set) -> Set:
 
 
 class Interval(_Interval):
+    def __init__(self, begin, end, data):
+        if begin >= end:
+            raise ValueError(f"The `begin` must always be less than `end`! Actual begin={begin} end={end}")
+
     def __lt__(self, interval: "Interval") -> bool:
         return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)
 
@@ -76,39 +80,33 @@ class LazyIntervalTree:
             points.append(IntervalPoint(interval.end, "R", data))
 
         points = sorted(points)
-        print(f"intervals={self.intervals}")
-        print(f"points={points}")
 
         stack: List[IntervalPoint] = [points[0]]
         result: List[Interval] = []
 
         for point in points[1:]:
-            if len(stack) == 0:
-                print("The stack was empty!!! Debug!!!")
-                stack.append(point)
-            else:
-                if stack[-1].ptype == "L":
-                    if point.ptype == "L":
-                        last = stack.pop()
+            last = stack.pop()
+            if last.ptype not in ["L", "R"]:
+                raise ValueError(f"Invalid point `last`={last}!")
+            if point.ptype not in ["L", "R"]:
+                raise ValueError(f"Invalid point `point`={point}!")
+
+            if last.ptype == "L":
+                if point.ptype == "L":
+                    stack.append(IntervalPoint(point.pval, point.ptype, data_combiner(last.data, point.data)))
+                    if last.pval < point.pval:
                         result.append(Interval(last.pval, point.pval, last.data))
-                        stack.append(IntervalPoint(point.pval, point.ptype, data_combiner(last.data, point.data)))
-                    elif point.ptype == "R":
-                        last = stack.pop()
+                else:  # point.ptype == "R"
+                    stack.append(point)
+                    if last.pval < point.pval:
                         result.append(Interval(last.pval, point.pval, data_combiner(last.data, point.data)))
-                        stack.append(point)
-                    else:
-                        raise ValueError(f"Invalid point {point}!")
-                elif stack[-1].ptype == "R":
-                    if point.ptype == "L":
-                        stack.pop()
-                    elif point.ptype == "R":
-                        last = stack.pop()
+            else:  # last.ptype == "R"
+                if point.ptype == "L":
+                    stack.append(point)
+                else:  # point.ptype == "R"
+                    stack.append(point)
+                    if last.pval < point.pval:
                         result.append(Interval(last.pval, point.pval, point.data))
-                        stack.append(point)
-                    else:
-                        raise ValueError(f"Invalid point {point}!")
-                else:
-                    raise ValueError(f"Invalid point {stack[-1]}!")
 
         self.intervals = result
 
