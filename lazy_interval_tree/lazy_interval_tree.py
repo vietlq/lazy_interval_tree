@@ -13,7 +13,7 @@ def set_union(a: Set, b: Set) -> Set:
 
 class Interval(_Interval):
     """
-    Note that creating a new Interval takes 4 times longer than a normal tuple
+    Note that creating a new Interval takes 4-5 times longer than a normal tuple
         %timeit tuple([1, 2, "data"])
         149 ns ± 4.27 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
         %timeit Interval(1, 2, "data")
