@@ -12,6 +12,26 @@ def set_union(a: Set, b: Set) -> Set:
 
 
 class Interval(_Interval):
+    """
+    Note that creating a new Interval takes 4 times longer than a normal tuple
+        %timeit tuple([1, 2, "data"])
+        149 ns ± 4.27 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+        %timeit Interval(1, 2, "data")
+        695 ns ± 14 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
+
+    It takes almost as twice longer to access a named element from Interval than from a normal tuple
+        interval_tuple = tuple([1, 2, "data"])
+        %timeit interval_tuple[1]
+        39.5 ns ± 1.04 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+        interval = Interval(1, 2, "data")
+        %timeit interval.end
+        60.2 ns ± 3.02 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+
+    However if we access the elements using numeric index then it is the same with normal tuple
+        %timeit interval[1]
+        38.9 ns ± 2.73 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+    """
+
     def __init__(self, begin, end, data):
         if begin >= end:
             raise ValueError(f"The `begin` must always be less than `end`! Actual begin={begin} end={end}")

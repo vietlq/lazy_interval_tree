@@ -41,7 +41,7 @@ def populate_empty_tree_from_pairs(tree, pairs):
 # More: https://www.baeldung.com/cs/finding-all-overlapping-intervals
 def run_bench():
     random.seed(20220305)
-    data = random.randint(2 ** 20, size=1_000_000)
+    data = random.randint(2**20, size=1_000_000)
     intervals = list_to_zip_range(data)
 
     slice_instructions = [
