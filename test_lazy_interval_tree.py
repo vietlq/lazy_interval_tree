@@ -34,6 +34,11 @@ def test_merge_overlaps():
             ],
         ),
         (
+            "two-matching-intervals",
+            [Interval(1, 4, "hello"), Interval(1, 4, "good")],
+            [Interval(begin=1, end=4, data={"hello", "good"}),],
+        ),
+        (
             "one-interval-contains-another",
             [Interval(3, 10, "hello"), Interval(1, 11, "good")],
             [
@@ -41,6 +46,16 @@ def test_merge_overlaps():
                 Interval(begin=3, end=10, data={"hello", "good"}),
                 Interval(begin=10, end=11, data={"good"}),
             ],
+        ),
+        (
+            "one-interval-starts-another",
+            [Interval(1, 10, "hello"), Interval(1, 11, "good")],
+            [Interval(begin=1, end=10, data={"hello", "good"}), Interval(begin=10, end=11, data={"good"}),],
+        ),
+        (
+            "one-interval-finishes-another",
+            [Interval(3, 11, "hello"), Interval(1, 11, "good")],
+            [Interval(begin=1, end=3, data={"good"}), Interval(begin=3, end=11, data={"hello", "good"}),],
         ),
     ],
 )
