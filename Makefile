@@ -1,4 +1,4 @@
-.PHONY: help lint style clean venv changelog
+.PHONY: help lint style clean venv changelog test
 
 SRC_DIR=lazy_interval_tree
 
@@ -7,6 +7,8 @@ help:
 	@echo "lint             Run linter (pylint)"
 	@echo "style            Run style check (flake8)"
 	@echo "changelog        Print changelog"
+	@echo "test             Run tests with verbose flags"
+	@echo "black            Format using black"
 
 lint:
 	pylint $(SRC_DIR) tests
@@ -30,3 +32,9 @@ venv:
 
 changelog:
 	gitchangelog
+
+test:
+	pytest -s -vvv
+
+black:
+	black -l 120 *.py lazy_interval_tree/*.py tests/*.py
