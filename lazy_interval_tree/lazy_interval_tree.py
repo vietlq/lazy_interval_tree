@@ -118,6 +118,7 @@ def split_overlaps(
     """
     Split overlapping intervals and combine data for overlapping cases.
     """
+    intervals = list(intervals)
     if len(intervals) < 2:
         return intervals
 
