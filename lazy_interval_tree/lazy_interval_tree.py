@@ -28,7 +28,7 @@ class IntervalPoint(_IntervalPoint):
     def __lt__(self, point: "IntervalPoint") -> bool:
         return (self.pval < point.pval) or (self.pval == point.pval and self.ptype < point.ptype)
 
-    def __gt__(self, point: "Interval") -> bool:
+    def __gt__(self, point: "IntervalPoint") -> bool:
         return (self.pval > point.pval) or (self.pval == point.pval and self.ptype > point.ptype)
 
 
