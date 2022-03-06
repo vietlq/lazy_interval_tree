@@ -9,6 +9,7 @@ help:
 	@echo "changelog        Print changelog"
 	@echo "test             Run tests with verbose flags"
 	@echo "black            Format using black"
+	@echo "bench            Run benchmarks"
 
 lint:
 	pylint $(SRC_DIR) tests
@@ -38,3 +39,6 @@ test:
 
 black:
 	black -l 120 *.py lazy_interval_tree/*.py tests/*.py
+
+bench:
+	python benchmark.py
