@@ -91,45 +91,7 @@ class LazyIntervalTree:
         """
         Split overlapping intervals and combine data for overlapping cases.
         """
-        if len(self.intervals) < 2:
-            return
-
-        points: List[IntervalPoint] = []
-        for interval in self.intervals:
-            data = interval.data if isinstance(interval.data, set) else {interval.data}
-            points.append(IntervalPoint(interval.begin, "L", data))
-            points.append(IntervalPoint(interval.end, "R", data))
-
-        points = sorted(points)
-
-        stack: List[IntervalPoint] = [points[0]]
-        result: List[Interval] = []
-
-        for point in points[1:]:
-            last = stack.pop()
-            if last.ptype not in ["L", "R"]:
-                raise ValueError(f"Invalid point `last`={last}!")
-            if point.ptype not in ["L", "R"]:
-                raise ValueError(f"Invalid point `point`={point}!")
-
-            if last.ptype == "L":
-                if point.ptype == "L":
-                    stack.append(IntervalPoint(point.pval, point.ptype, data_combiner(last.data, point.data)))
-                    if last.pval < point.pval:
-                        result.append(Interval(last.pval, point.pval, last.data))
-                else:  # point.ptype == "R"
-                    stack.append(point)
-                    if last.pval < point.pval:
-                        result.append(Interval(last.pval, point.pval, data_combiner(last.data, point.data)))
-            else:  # last.ptype == "R"
-                if point.ptype == "L":
-                    stack.append(point)
-                else:  # point.ptype == "R"
-                    stack.append(point)
-                    if last.pval < point.pval:
-                        result.append(Interval(last.pval, point.pval, point.data))
-
-        self.intervals = result
+        self.intervals = split_overlaps(self.intervals)
 
     def split_overlaps_and_merge_data(self, data_combiner: Optional[Callable[[Any, Any], Any]] = None) -> None:
         """
@@ -148,3 +110,50 @@ class LazyIntervalTree:
         Overlay on another LazyIntervalTree. This overloads the division operator `/`.
         """
         return self.overlay_on_another_tree(rhs)
+
+
+def split_overlaps(
+    intervals: Iterable[Interval], data_combiner: Optional[Callable[[Any, Any], Any]] = set_union
+) -> List[Interval]:
+    """
+    Split overlapping intervals and combine data for overlapping cases.
+    """
+    if len(intervals) < 2:
+        return intervals
+
+    points: List[IntervalPoint] = []
+    for interval in intervals:
+        data = interval.data if isinstance(interval.data, set) else {interval.data}
+        points.append(IntervalPoint(interval.begin, "L", data))
+        points.append(IntervalPoint(interval.end, "R", data))
+
+    points = sorted(points)
+
+    stack: List[IntervalPoint] = [points[0]]
+    result: List[Interval] = []
+
+    for point in points[1:]:
+        last = stack.pop()
+        if last.ptype not in ["L", "R"]:
+            raise ValueError(f"Invalid point `last`={last}!")
+        if point.ptype not in ["L", "R"]:
+            raise ValueError(f"Invalid point `point`={point}!")
+
+        if last.ptype == "L":
+            if point.ptype == "L":
+                stack.append(IntervalPoint(point.pval, point.ptype, data_combiner(last.data, point.data)))
+                if last.pval < point.pval:
+                    result.append(Interval(last.pval, point.pval, last.data))
+            else:  # point.ptype == "R"
+                stack.append(point)
+                if last.pval < point.pval:
+                    result.append(Interval(last.pval, point.pval, data_combiner(last.data, point.data)))
+        else:  # last.ptype == "R"
+            if point.ptype == "L":
+                stack.append(point)
+            else:  # point.ptype == "R"
+                stack.append(point)
+                if last.pval < point.pval:
+                    result.append(Interval(last.pval, point.pval, point.data))
+
+    return result
