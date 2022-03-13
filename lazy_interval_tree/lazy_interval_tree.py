@@ -7,7 +7,7 @@ _Interval = namedtuple("_Interval", "begin,end,data")
 _IntervalPoint = namedtuple("_IntervalPoint", "pval,ptype,data")
 
 
-def set_union(a: Set, b: Set) -> Set:
+def set_union(a: Set[Any], b: Set[Any]) -> Set[Any]:
     return a | b
 
 
@@ -32,32 +32,14 @@ class Interval(_Interval):
         38.9 ns ± 2.73 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
     """
 
-    def __new__(self, begin, end, data=None) -> "Interval":
+    def __new__(self, begin: Any, end: Any, data: Optional[Any] = None) -> "Interval":
         if begin >= end:
             raise ValueError(f"The `begin` must always be less than `end`! Actual begin={begin} end={end}")
         return super().__new__(self, begin, end, data)
 
-    def __lt__(self, interval) -> bool:
-        if isinstance(interval, Interval):
-            return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)
-        return NotImplemented
-
-    def __gt__(self, interval) -> bool:
-        if isinstance(interval, Interval):
-            return (self.begin > interval.begin) or (self.begin == interval.begin and self.end > interval.end)
-        return NotImplemented
-
 
 class IntervalPoint(_IntervalPoint):
-    def __lt__(self, point) -> bool:
-        if isinstance(point, IntervalPoint):
-            return (self.pval < point.pval) or (self.pval == point.pval and self.ptype < point.ptype)
-        return NotImplemented
-
-    def __gt__(self, point) -> bool:
-        if isinstance(point, IntervalPoint):
-            return (self.pval > point.pval) or (self.pval == point.pval and self.ptype > point.ptype)
-        return NotImplemented
+    pass
 
 
 class LazyIntervalTree:
@@ -68,10 +50,10 @@ class LazyIntervalTree:
     def add(self, interval: Interval) -> None:
         self.intervals.append(interval)
 
-    def addi(self, begin, end, data=None) -> None:
+    def addi(self, begin: Any, end: Any, data: Optional[Any] = None) -> None:
         self.intervals.append(Interval(begin, end, data))
 
-    def merge_overlaps(self, data_combiner: Optional[Callable[[Any, Any], Any]] = None) -> None:
+    def merge_overlaps(self, data_combiner: Callable[[Any, Any], Any] = set_union) -> None:
         """
         Merge overlapping intervals.
         """

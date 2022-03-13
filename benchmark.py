@@ -1,3 +1,4 @@
+from typing import Tuple, Any, Union, List
 from datetime import datetime
 import numpy as np
 import pandas as pd
@@ -7,23 +8,25 @@ from intervaltree.intervaltree import Interval, IntervalTree
 from lazy_interval_tree import LazyIntervalTree
 
 
-def rearrange_pair(pair):
+def rearrange_pair(pair: Tuple[Any, Any]) -> Tuple[Any, Any]:
     first, second = pair
     if first > second:
         return (second, first)
     return pair
 
 
-def list_to_zip_range(data):
+def list_to_zip_range(data: List[Any]) -> List[Tuple[Any, Any]]:
     """
     Skip pairs with equal elements.
     """
-    result = zip(data[:-1], data[1:])
-    result = [rearrange_pair(pair) for pair in result if pair[0] != pair[1]]
+    zip_res = zip(data[:-1], data[1:])
+    result = [rearrange_pair(pair) for pair in zip_res if pair[0] != pair[1]]
     return result
 
 
-def populate_empty_tree_from_pairs(tree, pairs):
+def populate_empty_tree_from_pairs(
+    tree: Union[IntervalTree, LazyIntervalTree], pairs: List[Tuple[Any, Any]]
+) -> Union[IntervalTree, LazyIntervalTree]:
     start_time = datetime.utcnow()
 
     for pair in pairs:
@@ -39,7 +42,7 @@ def populate_empty_tree_from_pairs(tree, pairs):
 # https://stackoverflow.com/questions/4542892/possible-interview-question-how-to-find-all-overlapping-intervals
 # The best solution O(n*log(n)): https://stackoverflow.com/a/9775727
 # More: https://www.baeldung.com/cs/finding-all-overlapping-intervals
-def run_bench():
+def run_bench() -> None:
     random.seed(20220305)
     data = random.randint(2**20, size=1_000_000)
     intervals = list_to_zip_range(data)
@@ -54,7 +57,7 @@ def run_bench():
         (intervals, None),
     ]
 
-    def _run_bench(tree):
+    def _run_bench(tree: Union[IntervalTree, LazyIntervalTree]) -> None:
         for an_iterable, slice_size in slice_instructions:
             final_iterable = an_iterable if slice_size is None else an_iterable[:slice_size]
             populate_empty_tree_from_pairs(tree, final_iterable)

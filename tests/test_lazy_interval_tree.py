@@ -1,13 +1,15 @@
+from typing import Set, List, Any
+
 import pytest
 
 from lazy_interval_tree import Interval, LazyIntervalTree
 
 
-def test_merge_overlaps():
+def test_merge_overlaps() -> None:
     intervals = [Interval(3, 10, "hello"), Interval(1, 11, "good")]
     tree = LazyIntervalTree(intervals)
     print(tree.intervals)
-    tree.merge_overlaps(data_combiner=list)
+    tree.merge_overlaps(data_combiner=lambda x, y: (x, y))
     print(tree.intervals)
 
 
@@ -59,10 +61,10 @@ def test_merge_overlaps():
         ),
     ],
 )
-def test_split_overlaps(test_case, intervals, expected):
+def test_split_overlaps(test_case: str, intervals: List[Interval], expected: List[Interval]) -> None:
     tree = LazyIntervalTree(intervals)
 
-    def set_union(a, b):
+    def set_union(a: Set[Any], b: Set[Any]) -> Set[Any]:
         return a | b
 
     tree.split_overlaps(data_combiner=set_union)
@@ -70,13 +72,13 @@ def test_split_overlaps(test_case, intervals, expected):
 
 
 @pytest.mark.parametrize("begin,end", [(1, 1), (2, 1)])
-def test_new_interval_begin_less_than_end(begin, end):
+def test_new_interval_begin_less_than_end(begin: Any, end: Any) -> None:
     with pytest.raises(ValueError) as exc:
         Interval(1, 1, None)
 
     assert "The `begin` must always be less than `end`" in str(exc)
 
 
-def test_new_interval_without_data():
+def test_new_interval_without_data() -> None:
     interval = Interval(1, 2)
     assert interval.data is None
