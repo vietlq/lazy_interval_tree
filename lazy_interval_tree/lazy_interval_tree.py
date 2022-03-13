@@ -1,6 +1,6 @@
 from collections import namedtuple
 from copy import deepcopy
-from typing import Any, Callable, Optional, Iterable, List, Set
+from typing import Any, Callable, Optional, Iterable, List, Set, Dict
 
 
 _Interval = namedtuple("_Interval", "begin,end,data")
@@ -13,6 +13,10 @@ def set_union(a: Set[Any], b: Set[Any]) -> Set[Any]:
 
 def combine_lists(a: List[Any], b: List[Any]) -> List[Any]:
     return a + b
+
+
+def combine_dicts(a: Dict[Any, Any], b: Dict[Any, Any]) -> Dict[Any, Any]:
+    return {**a, **b}
 
 
 class Interval(_Interval):
