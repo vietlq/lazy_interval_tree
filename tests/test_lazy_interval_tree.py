@@ -64,10 +64,10 @@ def test_merge_overlaps() -> None:
 def test_split_overlaps(test_case: str, intervals: List[Interval], expected: List[Interval]) -> None:
     tree = LazyIntervalTree(intervals)
 
-    def set_union(a: Set[Any], b: Set[Any]) -> Set[Any]:
+    def combine_sets(a: Set[Any], b: Set[Any]) -> Set[Any]:
         return a | b
 
-    tree.split_overlaps(data_combiner=set_union)
+    tree.split_overlaps(data_combiner=combine_sets)
     assert expected == tree.intervals
 
 

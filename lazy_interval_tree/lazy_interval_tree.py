@@ -1,50 +1,11 @@
 from collections import namedtuple
 from copy import deepcopy
-from typing import Any, Callable, Optional, Iterable, List, Set, Dict
+from typing import Any, Callable, Optional, Iterable, List
 
+from .data_combiners import combine_sets
 
 _Interval = namedtuple("_Interval", "begin,end,data")
 _IntervalPoint = namedtuple("_IntervalPoint", "pval,ptype,data")
-
-
-def set_union(a: Set[Any], b: Set[Any]) -> Set[Any]:
-    """
-    Returns union of two sets. The order does not matter!
-    """
-    return a | b
-
-
-def combine_dicts_to_dict_of_sets(a: Dict[Any, Any], b: Dict[Any, Any]) -> Dict[Any, Set[Any]]:
-    """
-    Returns union of two dicts. Matching keys will have values pushed into a set. The order does not matter!
-    """
-    result = {k: {v} for (k, v) in a}
-    for k, v in b.items():
-        if k in result:
-            result[k].add(v)
-        else:
-            result[k] = {v}
-    return result
-
-
-def combine_lists(a: List[Any], b: List[Any]) -> List[Any]:
-    """
-    Returns sum of two lists. The order matters a little.
-    """
-    return a + b
-
-
-def combine_dicts_to_dict_of_lists(a: Dict[Any, Any], b: Dict[Any, Any]) -> Dict[Any, List[Any]]:
-    """
-    Returns union of two dicts. Matching keys will have values pushed into a list. The order matters a little.
-    """
-    result = {k: [v] for (k, v) in a}
-    for k, v in b.items():
-        if k in result:
-            result[k].append(v)
-        else:
-            result[k] = [v]
-    return result
 
 
 class Interval(_Interval):
@@ -89,7 +50,7 @@ class LazyIntervalTree:
     def addi(self, begin: Any, end: Any, data: Optional[Any] = None) -> None:
         self.intervals.append(Interval(begin, end, data))
 
-    def merge_overlaps(self, data_combiner: Callable[[Any, Any], Any] = set_union) -> None:
+    def merge_overlaps(self, data_combiner: Callable[[Any, Any], Any] = combine_sets) -> None:
         """
         Merge overlapping intervals.
         """
@@ -113,7 +74,7 @@ class LazyIntervalTree:
 
         self.intervals = result
 
-    def split_overlaps(self, data_combiner: Optional[Callable[[Any, Any], Any]] = set_union) -> None:
+    def split_overlaps(self, data_combiner: Optional[Callable[[Any, Any], Any]] = combine_sets) -> None:
         """
         Split overlapping intervals and combine data for overlapping cases.
         """
@@ -139,7 +100,7 @@ class LazyIntervalTree:
 
 
 def split_overlaps(
-    intervals: Iterable[Interval], data_combiner: Callable[[Any, Any], Any] = set_union
+    intervals: Iterable[Interval], data_combiner: Callable[[Any, Any], Any] = combine_sets
 ) -> List[Interval]:
     """
     Split overlapping intervals and combine data for overlapping cases.
