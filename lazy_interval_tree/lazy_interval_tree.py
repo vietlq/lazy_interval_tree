@@ -109,10 +109,14 @@ def split_overlaps(
     Split overlapping intervals and combine data for overlapping cases.
     """
     points: List[IntervalPoint] = []
+    # Note that `intervals` can be a generator, so we defer length check to `points` instead
     for interval in intervals:
         data = interval.data if isinstance(interval.data, set) else {interval.data}
         points.append(IntervalPoint(interval.begin, "L", data))
         points.append(IntervalPoint(interval.end, "R", data))
+
+    if len(points) == 0:
+        return []
 
     points = sorted(points)
 
