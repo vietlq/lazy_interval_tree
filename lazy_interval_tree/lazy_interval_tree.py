@@ -15,11 +15,6 @@ def combine_lists(a: List[Any], b: List[Any]) -> List[Any]:
     return a + b
 
 
-def extend_list(a: List[Any], b: List[Any]) -> List[Any]:
-    a.extend(b)
-    return a
-
-
 class Interval(_Interval):
     """
     Note that creating a new Interval takes 4-5 times longer than a normal tuple
