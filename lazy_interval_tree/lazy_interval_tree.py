@@ -38,26 +38,26 @@ class Interval(_Interval):
         return super().__new__(self, begin, end, data)
 
     def __lt__(self, interval) -> bool:
-        if not isinstance(interval, Interval):
-            return NotImplemented
-        return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)
+        if isinstance(interval, Interval):
+            return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)
+        return NotImplemented
 
     def __gt__(self, interval) -> bool:
-        if not isinstance(interval, Interval):
-            return NotImplemented
-        return (self.begin > interval.begin) or (self.begin == interval.begin and self.end > interval.end)
+        if isinstance(interval, Interval):
+            return (self.begin > interval.begin) or (self.begin == interval.begin and self.end > interval.end)
+        return NotImplemented
 
 
 class IntervalPoint(_IntervalPoint):
     def __lt__(self, point) -> bool:
-        if not isinstance(point, IntervalPoint):
-            return NotImplemented
-        return (self.pval < point.pval) or (self.pval == point.pval and self.ptype < point.ptype)
+        if isinstance(point, IntervalPoint):
+            return (self.pval < point.pval) or (self.pval == point.pval and self.ptype < point.ptype)
+        return NotImplemented
 
     def __gt__(self, point) -> bool:
-        if not isinstance(point, IntervalPoint):
-            return NotImplemented
-        return (self.pval > point.pval) or (self.pval == point.pval and self.ptype > point.ptype)
+        if isinstance(point, IntervalPoint):
+            return (self.pval > point.pval) or (self.pval == point.pval and self.ptype > point.ptype)
+        return NotImplemented
 
 
 class LazyIntervalTree:
