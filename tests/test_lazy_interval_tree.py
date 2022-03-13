@@ -67,3 +67,16 @@ def test_split_overlaps(test_case, intervals, expected):
 
     tree.split_overlaps(data_combiner=set_union)
     assert expected == tree.intervals
+
+
+@pytest.mark.parametrize("begin,end", [(1, 1), (2, 1)])
+def test_new_interval_begin_less_than_end(begin, end):
+    with pytest.raises(ValueError) as exc:
+        Interval(1, 1, None)
+
+    assert "The `begin` must always be less than `end`" in str(exc)
+
+
+def test_new_interval_without_data():
+    interval = Interval(1, 2)
+    assert interval.data is None

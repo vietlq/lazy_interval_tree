@@ -8,8 +8,9 @@ help:
 	@echo "style            Run style check (flake8)"
 	@echo "changelog        Print changelog"
 	@echo "test             Run tests with verbose flags"
-	@echo "black            Format using black"
+	@echo "format           Format using black"
 	@echo "bench            Run benchmarks"
+	@echo "mypy             Run mypy on Python files"
 
 lint:
 	pylint $(SRC_DIR) tests
@@ -37,8 +38,11 @@ changelog:
 test:
 	pytest -s -vvv
 
-black:
+format:
 	black -l 120 *.py lazy_interval_tree/*.py tests/*.py
 
 bench:
 	python benchmark.py
+
+mypy:
+	find . -name '*.py' | xargs mypy

@@ -3,8 +3,8 @@ from copy import deepcopy
 from typing import Any, Callable, Optional, Iterable, List, Set
 
 
-_Interval = namedtuple("Interval", "begin,end,data")
-_IntervalPoint = namedtuple("IntervalPoint", "pval,ptype,data")
+_Interval = namedtuple("_Interval", "begin,end,data")
+_IntervalPoint = namedtuple("_IntervalPoint", "pval,ptype,data")
 
 
 def set_union(a: Set, b: Set) -> Set:
@@ -32,23 +32,31 @@ class Interval(_Interval):
         38.9 ns ± 2.73 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
     """
 
-    def __init__(self, begin, end, data):
+    def __new__(self, begin, end, data=None) -> "Interval":
         if begin >= end:
             raise ValueError(f"The `begin` must always be less than `end`! Actual begin={begin} end={end}")
-        super().__init__()
+        return super().__new__(self, begin, end, data)
 
-    def __lt__(self, interval: "Interval") -> bool:
+    def __lt__(self, interval) -> bool:
+        if not isinstance(interval, Interval):
+            return NotImplemented
         return (self.begin < interval.begin) or (self.begin == interval.begin and self.end < interval.end)
 
-    def __gt__(self, interval: "Interval") -> bool:
+    def __gt__(self, interval) -> bool:
+        if not isinstance(interval, Interval):
+            return NotImplemented
         return (self.begin > interval.begin) or (self.begin == interval.begin and self.end > interval.end)
 
 
 class IntervalPoint(_IntervalPoint):
-    def __lt__(self, point: "IntervalPoint") -> bool:
+    def __lt__(self, point) -> bool:
+        if not isinstance(point, IntervalPoint):
+            return NotImplemented
         return (self.pval < point.pval) or (self.pval == point.pval and self.ptype < point.ptype)
 
-    def __gt__(self, point: "IntervalPoint") -> bool:
+    def __gt__(self, point) -> bool:
+        if not isinstance(point, IntervalPoint):
+            return NotImplemented
         return (self.pval > point.pval) or (self.pval == point.pval and self.ptype > point.ptype)
 
 
@@ -113,7 +121,7 @@ class LazyIntervalTree:
 
 
 def split_overlaps(
-    intervals: Iterable[Interval], data_combiner: Optional[Callable[[Any, Any], Any]] = set_union
+    intervals: Iterable[Interval], data_combiner: Callable[[Any, Any], Any] = set_union
 ) -> List[Interval]:
     """
     Split overlapping intervals and combine data for overlapping cases.
